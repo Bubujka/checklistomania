@@ -65,6 +65,9 @@ var getApp = function(passport, GitHubStrategy, github) {
   };
 
   function ensureGithubOrg(req, res, next) {
+    if(!process.env.GITHUB_USERS_ORG){
+      return next();
+    }
     api.db.collection('users').findOne({username: req.user.username},
       function(err, user) {
           if(user) {next()}
@@ -73,7 +76,7 @@ var getApp = function(passport, GitHubStrategy, github) {
               function(err, orgs) {
                   var inOrg = false;
                     orgs.forEach(function(org) {
-                      if(org.login == '18F'){
+                      if(org.login == process.env.GITHUB_USERS_ORG){
                         inOrg = true;
                       }
                     });
